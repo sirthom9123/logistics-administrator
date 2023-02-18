@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
+
+      body {
+        font-family: 'Roboto', sans-serif;
+        color: #222;
+        line-height: 1.5;
+      }
+
+      table {
+        width: 100%;
+        border-spacing: 0;
+        border-collapse: collapse;
+        margin: 20px 0;
+        text-align: left;
+      }
+
+      table th,
+      table td {
+        text-align: left;
+        padding: 10px;
+        margin: 0;
+      }
+
+      tbody tr:nth-child(odd) {
+        background: #efefef;
+      }
+
+      thead th,
+      tbody tr.total {
+        text-align: left;
+        background: #989a97;
+        color: #fff;
+        font-weight: bold;
+      }
+
+      h1 {
+        margin: 0;
+      }
+
+      p {
+        font-size: 12px;
+      }
+
+      .secondary {
+        color: #bbb;
+        margin-bottom: 20px;
+        font-size: 14px;
+      }
+
+      .num {
+        text-align: left;
+      }
+
+      .paid,
+      .pending {
+        color: #555555;
+        border: 4px solid #555555;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 14px;
+        padding: 4px 12px 0px;
+        float: right;
+        transform: rotate(-15deg);
+        margin-right: 40px;
+      }
+
+      .pending {
+        color: #555555;
+        border: 4px solid #555555;
+      }
+
+      .total {
+        font-size: 12px;
+      }
+      .footer {
+        margin-bottom: 0;
+      }
+
+      .footer > p {
+        font-size: 15px;
+        text-transform: uppercase;
+        color: #898481;
+        font-family: 'Jost', sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <span class="pending"><h1>DevFix IT Solutions</h1> </span>
+    <p>
+      <span class="secondary"
+        >Quote created on: {{user.created|date:"M d, Y"}}
+      </span>
+    </p>
+
+    <span class="pending"> <h1>Customer Details</h1> </span>
+    <p><b>Full Names:</b> {{user.first_name}} 
+      {{user.last_name}} 
+    </p>
+
+    <span class="pending">
+      <h4 class="card-subtitle mb-2 text-muted"><b>Customer Code:</b> {{user.customer_code}} </h4>
+    </span>
+    <span class="pending"><h3>Travelling from </h3></span>
+    <p class="secondary">Pick Up: {{ destination.location }}<p>
+    <p class="secondary">Drop Off: {{ destination.destination}}<p>
+    
+      <span class="secondary"
+        >Delivery date: {{user.pickup_date|date:"M d, Y"}}  {{user.pickup_date|time}}
+      </span>
+    <table class="table">
+      <span class="pending"><h1>Invoice</h1></span>
+      <thead>
+        <tr>
+          <th>Cost for delivery</th>
+          <th class="num">Rate</th>
+          <th class="num">Helpers</th>
+          <th class="num">Floors</th>
+          <th class="num">Grand Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>R{{cost|floatformat:2}}</td>
+          <td class="num"><span>R{{ rate|floatformat:2 }}</span></td>
+          <td class="num">{% if helper_cost %} {{user.additional_helpers}} * R140/pp = R{{helper_cost|floatformat:2}} {%else %} None {% endif %}</td>
+          <td class="num">{% if floors_cost %} {{user.floors}} * R50/pf = R{{floors_cost|floatformat:2}} {%else %} None {% endif %}</td>
+          <td class="num">R{{total_cost|floatformat:2}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footer"></div>
+  </body>
+</html>
