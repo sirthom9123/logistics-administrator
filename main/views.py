@@ -71,6 +71,7 @@ def index(request):
     loc = ''
     form = CustomerForm()
     obj = get_object_or_404(MyOffice, id=1)
+    token = settings.MAPBOX_KEY
     
     if pick_up and destination:
         map_html, tot_distance = calculate_distance(pick_up, destination)
@@ -97,7 +98,9 @@ def index(request):
         'map_html': map_html,
         'distance': tot_distance,
         'cost': cost,
-        'form': form
+        'form': form,
+        'token': token,
+        'destination': destination,
     }
 
     return render(request, 'map/tracker.html', context)

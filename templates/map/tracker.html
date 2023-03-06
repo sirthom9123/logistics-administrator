@@ -1,4 +1,9 @@
-{% extends 'base.html' %} {% load crispy_forms_tags %} {% block title %} calculate distance {% endblock title%} {% block content %}
+{% extends 'base.html' %} {% load static %}{% load crispy_forms_tags %} {% block title %} calculate distance {% endblock title%}
+{% block scripts %}
+<script id="search-js" defer src="https://api.mapbox.com/search-js/v1.0.0-beta.14/web.js"></script>
+
+{% endblock scripts %}
+{% block content %}
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -26,25 +31,28 @@
 <div class="container">
     <div class="row">
         <div class="col-md-10 mb-3">
-            <h2>Create a new request</h2>
             <br />
-            <form>
+            <form id="location-tracker">
                 <div class="form-group mt-5">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                         <input 
                             type="text"
                             name="pick_up"
                             class="form-control"
-                            placeholder="Pick Up Location"
+                            placeholder="Pick~Up"
+                            autocomplete="shipping street-address"
+                            id="pick-up"
                         />
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                         <input
                             type="text"
                             name="destination"
                             class="form-control"
                             placeholder="Destination"
+                            autocomplete="shipping street-address"
+                            id="destination"
                         />
                         </div>
                         <div class="col-md-6 mt-4">
@@ -57,13 +65,13 @@
     </div>
     <div class="row">
         {% if distance %}
-        <div class="col-md-6 mb-5">
+        <div class="col-md-10 mb-5">
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Travelling to {{ destination }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted"><b>Total distance covered is {{ distance }} km</h6>
-                    <p class="card-text">Cost for delivery is: R{{cost|floatformat:2}}, charged at R5.50/km</p>
-                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add Customer</button>
+                    {% comment %} <h6 class="card-subtitle mb-2 text-muted"><b>Total distance covered is {{ distance }} km</h6> {% endcomment %}
+                    <p class="card-text">Service fee = R{{cost|floatformat:2}}</p>
+                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Accept</button>
                 </div>
             </div>
             {% endif %} {% if map_html %}
@@ -72,3 +80,9 @@
     </div>
 </div>
 {% endblock content %}
+{% block javascript %}
+<script src="{% static 'js/main.js' %}"></script>
+<script>        
+    const token = '{{token|safe}}'
+</script>
+{% endblock javascript %}

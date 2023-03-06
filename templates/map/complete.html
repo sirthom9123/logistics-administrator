@@ -9,18 +9,18 @@
             <br />
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Travel </h5><p>{{ destination.location }} to  {{ destination.destination}}</p>
+                    <h5 class="card-title">Travelling from </h5><p>{{ destination.location }} to  {{ destination.destination}}</p>
                     <h6 class="card-subtitle mb-2 text-muted"><b>Total distance covered is {{ distance }} km</h6>
-                    <p class="card-text">Cost for delivery is: R{{cost|floatformat:2}}, charged at R5.50/km</p>
+                    <p class="card-text">Service fee: R{{cost|floatformat:2}}</p>
                     <a href="#" class="card-link">For {{user.first_name}} {{ user.last_name}} </a>
                     <h6 class="card-subtitle mb-2 mt-2 text-muted">Additional Info</h6>
                     <ul>
                         <li>Date: {{user.pickup_date|date}} at {{user.pickup_date|time}}</li>
-                        <li>Helpers: {% if helper_cost %} {{user.additional_helpers}} * R140/pp = R{{helper_cost|floatformat:2}}  {%else %} None {% endif %}</li>
-                        <li>Floors: {% if floors_cost %} {{user.floors}} * R80/pf = R{{floors_cost|floatformat:2}}  {%else %} None {% endif %}</li>
+                        <li>Helpers: {% if helper_cost %} R{{helper_cost|floatformat:2}}  {% else %} No Helpers {% endif %}</li>
+                        <li>Floors: {% if floors_cost %} R{{floors_cost|floatformat:2}}  {% else %} None {% endif %}</li>
                     </ul>
-                    <p class="card-text">Total Cost for delivery is: R{{total_cost|floatformat:2}}</p>
-                    <a href="{% url 'export_quote' user.id %}" class="btn btn danger" target="_blank"> Create Quote</a>
+                    <p class="card-text">Total Service fee: R{{total_cost|floatformat:2}}</p>
+                    <a href="{% url 'export_quote' user.id %}" class="btn btn-success" target="_blank"> Create Quote</a>
                 </div>
             </div>
             <br/>
