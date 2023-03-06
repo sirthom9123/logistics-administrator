@@ -103,7 +103,7 @@ def index(request):
         'destination': destination,
     }
 
-    return render(request, 'map/tracker.html', context)
+    return render(request, 'map/index.html', context)
 
 def calculate_distance(pick_up, destination):
     # office location
