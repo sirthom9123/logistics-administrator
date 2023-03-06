@@ -1,11 +1,10 @@
-# Weather Forecast 
+# Logistics Administrator 
 
 #### Framework
 Built with Django. 
 
 #### Libraries
 API Used: 
-- Openweathermap
 - Mapbox 
 
 Command To Execute on Windows:
