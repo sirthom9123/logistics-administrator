@@ -1,15 +1,16 @@
-{% extends 'base.html' %} {% load static %}{% load crispy_forms_tags %} {% block title %} calculate distance {% endblock title%}
+{% extends 'base.html' %} {% load static %}{% load crispy_forms_tags %} {% block title %} Home {% endblock title%}
 {% block scripts %}
 <script id="search-js" defer src="https://api.mapbox.com/search-js/v1.0.0-beta.14/web.js"></script>
 
 {% endblock scripts %}
+{% block header %} {% include 'includes/nav.html' %} {% endblock header%}
 {% block content %}
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">Personal Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -22,7 +23,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="/" class="btn btn-danger" data-bs-dismiss="modal" style="float: right;background-color: #990505;">Close</a>
             </div>
         </div>
     </div>
@@ -80,7 +81,8 @@
                         <h2>Request Quote</h2>
                     </div>
                     <div class="cta-from">
-                        <form action="#" id="location-tracker">
+                        <form method="POST" id="location-tracker" >
+                            {% csrf_token %}
                             <div class="cta-form-col d-flex justify-content-between">
                                 <input 
                                     type="text"

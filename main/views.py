@@ -63,8 +63,8 @@ def single_order(request, pk):
     
 
 def index(request):
-    pick_up = request.GET.get('pick_up')
-    destination = request.GET.get('destination')
+    pick_up = ''
+    destination = ''
     map_html = ''
     tot_distance = ''
     cost = ''
@@ -73,18 +73,23 @@ def index(request):
     obj = get_object_or_404(MyOffice, id=1)
     token = settings.MAPBOX_KEY
     
-    if pick_up and destination:
-        map_html, tot_distance = calculate_distance(pick_up, destination)
-            
-        # calculate the total cost for delivery
-        cost = round(tot_distance * int(obj.cost_per_kilo), 2)
+    if request.method == 'POST':
+        pick_up = request.POST.get('pick_up')
+        destination = request.POST.get('destination')
+        if pick_up and destination:
+            map_html, tot_distance = calculate_distance(pick_up, destination)
+                
+            # calculate the total cost for delivery
+            cost = round(tot_distance * int(obj.cost_per_kilo), 2)
 
-        # Create instance of request
-        loc = Measurement.objects.create(
-                    location=pick_up,
-                    destination=destination,
-                    distance=tot_distance
-    )
+            # Create instance of request
+            loc = Measurement.objects.create(
+                        location=pick_up,
+                        destination=destination,
+                        distance=tot_distance
+                    )
+        else:
+            messages.error(request, 'Please enter both Pick-up and destination addresses!')
     
     if loc:
         request.session['loc'] = loc.pk

@@ -1,36 +1,69 @@
 {% extends 'base.html' %} {% load crispy_forms_tags %} 
-{% block title %} calculate distance {% endblock title %} {% block content %}
+{% block title %} Request completed {% endblock title %} 
+{% block header %} {% include 'includes/header.html' %} {% endblock header%}
 
-<br />
-<div class="container">
-    <div class="row">
-        <div class="col-md-10">
-            {% include 'includes/messages.html' %}
-            <br />
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Travelling from </h5><p>{{ destination.location }} to  {{ destination.destination}}</p>
-                    <h6 class="card-subtitle mb-2 text-muted"><b>Total distance covered is {{ distance }} km</h6>
-                    <p class="card-text">Service fee: R{{cost|floatformat:2}}</p>
-                    <a href="#" class="card-link">For {{user.first_name}} {{ user.last_name}} </a>
-                    <h6 class="card-subtitle mb-2 mt-2 text-muted">Additional Info</h6>
-                    <ul>
-                        <li>Date: {{user.pickup_date|date}} at {{user.pickup_date|time}}</li>
-                        <li>Helpers: {% if helper_cost %} R{{helper_cost|floatformat:2}}  {% else %} No Helpers {% endif %}</li>
-                        <li>Floors: {% if floors_cost %} R{{floors_cost|floatformat:2}}  {% else %} None {% endif %}</li>
-                    </ul>
-                    <p class="card-text">Total Service fee: R{{total_cost|floatformat:2}}</p>
-                    <a href="{% url 'export_quote' user.id %}" class="btn btn-success" target="_blank"> Create Quote</a>
+{% block content %}
+
+<!-- breadcrumb-area -->
+<div class="breadcrumb-area breadcrumb-bg s-breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-content">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="dots"></li>
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Request Complete</li>
+                            <li class="dots2"></li>
+                        </ol>
+                    </nav>
+                    <h2>Your request details</h2>
                 </div>
             </div>
-            <br/>
         </div>
-        
-    </div>
-    <div class="col-md-10 mb-4">
-        {{ map|safe }}
     </div>
 </div>
-
+<!-- breadcrumb-area-end -->
+<!-- services-details -->
+<div class="services-details-area pt-120 pb-115">
+    <div class="container">
+        {% include 'includes/messages.html' %}
+        <div class="services-details-wrap">
+            <div class="row">
+                <div class="col-lg-4 order-2 order-lg-0">
+                    <aside class="services-sidebar">
+                        <div class="services-widget mb-40">
+                            <div class="service-doc-list">
+                                <ul>
+                                    <li><a href="{% url 'export_quote' user.id %}" target="_blank"> Generate Quote<i class="fas fa-file-pdf"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+                <div class="col-lg-8">
+                    <div class="services-details-content">
+                        <h4>Travelling from {{ destination.location }} to  {{ destination.destination}}</h4>
+                        <h4>Additional Info</h4>
+                        <p>Customer Details: {{user.first_name}} {{ user.last_name}}</p>
+                        <div class="services-details-list">
+                            <ul>
+                                <li><i class="fas fa-arrow-alt-circle-right"></i>Date: {{user.pickup_date|date}} at {{user.pickup_date|time}}</li>
+                                <li><i class="fas fa-arrow-alt-circle-right"></i>Helpers: {% if helper_cost %} R{{helper_cost|floatformat:2}}  {% else %} No Helpers {% endif %}</li>
+                                <li><i class="fas fa-arrow-alt-circle-right"></i>Floors: {% if floors_cost %} R{{floors_cost|floatformat:2}}  {% else %} None {% endif %}</li>
+                                <li><i class="fas fa-arrow-alt-circle-right"></i>Total Service Fees: R{{total_cost|floatformat:2}}</li>
+                            </ul>
+                        </div>
+                        <div class="services-details-img">
+                            {{ map|safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- services-details-end -->
 
 {% endblock content %}

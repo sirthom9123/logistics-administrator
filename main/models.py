@@ -49,13 +49,6 @@ class AdditionalInfo(models.Model):
         return f'{self.first_name} is moving on {self.pickup_date}'
     
     
-    def save(self, *args, **kwargs):
-        if self.customer_code == "":
-            name = textwrap.shorten(self.last_name, width=3, placeholder='')
-            print(self.pk)
-            self.customer_code = name.upper() + "00" + str(self.pk)
-        return super().save(*args, **kwargs)
-    
     def get_absolute_url(self):
         return reverse("single_order", kwargs={"pk": self.pk})
     
