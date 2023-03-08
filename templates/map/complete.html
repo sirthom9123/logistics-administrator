@@ -50,8 +50,8 @@
                         <div class="services-details-list">
                             <ul>
                                 <li><i class="fas fa-arrow-alt-circle-right"></i>Date: {{user.pickup_date|date}} at {{user.pickup_date|time}}</li>
-                                <li><i class="fas fa-arrow-alt-circle-right"></i>Helpers: {% if helper_cost %} R{{helper_cost|floatformat:2}}  {% else %} No Helpers {% endif %}</li>
-                                <li><i class="fas fa-arrow-alt-circle-right"></i>Floors: {% if floors_cost %} R{{floors_cost|floatformat:2}}  {% else %} None {% endif %}</li>
+                                <li><i class="fas fa-arrow-alt-circle-right"></i>{% if helper_cost %}{{user.additional_helpers}}  Helper(s): R{{helper_cost|floatformat:2}}  {% else %} No Helpers {% endif %}</li>
+                                <li><i class="fas fa-arrow-alt-circle-right"></i>{% if floors_cost %} {{user.floors}} Floor(s):  R{{floors_cost|floatformat:2}}  {% else %} None {% endif %}</li>
                                 <li><i class="fas fa-arrow-alt-circle-right"></i>Total Service Fees: R{{total_cost|floatformat:2}}</li>
                             </ul>
                         </div>

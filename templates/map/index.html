@@ -1,141 +1,176 @@
-{% extends 'base.html' %} {% load static %}{% load crispy_forms_tags %} {% block title %} Home {% endblock title%}
-{% block scripts %}
-<script id="search-js" defer src="https://api.mapbox.com/search-js/v1.0.0-beta.14/web.js"></script>
+{% extends 'base.html' %} {% load static %}{% load crispy_forms_tags %} 
+{% block title %} Home {% endblock title%} {% block scripts %}
+<script
+  id="search-js"
+  defer
+  src="https://api.mapbox.com/search-js/v1.0.0-beta.14/web.js"
+></script>
 
-{% endblock scripts %}
-{% block header %} {% include 'includes/nav.html' %} {% endblock header%}
+{% endblock scripts %} 
+{% block header %} {% include 'includes/nav.html' %} {% endblock header%} 
 {% block content %}
 <!-- Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Personal Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <form action="/customer_form/" method="POST" autocomplete="off">
-                        {% csrf_token %}
-                        <div class="form-group">{{form|crispy}}</div>
-                        <button type="submit" class="btn btn-primary">Proceed</button>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <a href="/" class="btn btn-danger" data-bs-dismiss="modal" style="float: right;background-color: #990505;">Close</a>
-            </div>
+<div
+  class="modal fade"
+  id="staticBackdrop"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Personal Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <form action="/customer_form/" method="POST" autocomplete="off">
+            {% csrf_token %}
+            <div class="form-group">{{form|crispy}}</div>
+            <button type="submit" class="btn btn-primary">Proceed</button>
+          </form>
         </div>
+      </div>
+      <div class="modal-footer">
+        <a
+          href="/"
+          class="btn btn-danger"
+          data-bs-dismiss="modal"
+          style="float: right; background-color: #990505"
+          >Close</a
+        >
+      </div>
     </div>
+  </div>
 </div>
 <!-- Modal end-->
 
-
 <!-- slider-area -->
 <section class="s-slider-area">
-    <div class="s-slider-bg fix">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="s-slider-content text-center">
-                        
-                        <h2 class="frame-1"><span>Delivery</span> Express</h2>
-                        <h2 class="frame-2"><span>Delivery</span> Express</h2>
-                        <h2 class="frame-3"><span>Delivery</span> Express</h2>
-                        <h2 class="frame-4"><span>Delivery</span> Express</h2>
-                    </div>
-                </div>
-            </div>
+  <div class="s-slider-bg fix">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="s-slider-content text-center">
+            <h2 class="frame-1"><span>Delivery</span> Express</h2>
+            <h2 class="frame-2"><span>Delivery</span> Express</h2>
+            <h2 class="frame-3"><span>Delivery</span> Express</h2>
+            <h2 class="frame-4"><span>Delivery</span> Express</h2>
+          </div>
         </div>
-        <a href="#request-section" class="icon-scroll">
-            <span></span>
-            <span></span>
-            <span></span>
-        </a>
-        <div class="slider-golve">
-            <img src="{% static 'img/slider/golve.png' %}" class="rotateme" alt="">
-        </div>
-        <div class="slider-golve-bike">
-            <img src="{% static 'img/slider/bike.png' %}" alt="">
-        </div>
-        <div class="slide-golve-car">
-            <img src="{% static 'img/slider/car.png' %}" alt="">
-        </div>
-        <div class="slider-plane">
-            <img src="{% static 'img/slider/plane.png' %}" alt="">
-        </div>
+      </div>
     </div>
+    <a href="#request-section" class="icon-scroll">
+      <span></span>
+      <span></span>
+      <span></span>
+    </a>
+    <div class="slider-golve">
+      <img src="{% static 'img/slider/golve.png' %}" class="rotateme" alt="" />
+    </div>
+    <div class="slider-golve-bike">
+      <img src="{% static 'img/slider/bike.png' %}" alt="" />
+    </div>
+    <div class="slide-golve-car">
+      <img src="{% static 'img/slider/car.png' %}" alt="" />
+    </div>
+    <div class="slider-plane">
+      <img src="{% static 'img/slider/plane.png' %}" alt="" />
+    </div>
+  </div>
 </section>
 <!-- slider-area end -->
 
 <!-- section-request-area -->
-<section id="request-section" class="area-wrapper black-bg position-relative pt-115 pb-120">
-    <div class="area-wrap-bg"></div>
-    <div class="testimonial-map-bg"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="cta-area cta-pl">
-                    <div class="section-title white-title mb-60">
-                        <h6>Clients Trust Us</h6>
-                        <h2>Request Quote</h2>
-                    </div>
-                    <div class="cta-from">
-                        <form method="POST" id="location-tracker" >
-                            {% csrf_token %}
-                            <div class="cta-form-col d-flex justify-content-between">
-                                <input 
-                                    type="text"
-                                    name="pick_up"
-                                    placeholder="Pick~Up"
-                                    autocomplete="shipping street-address"
-                                    id="pick-up"
-                                />
-                                <input
-                                    type="text"
-                                    name="destination"
-                                    placeholder="Destination"
-                                    autocomplete="shipping street-address"
-                                    id="destination"
-                                />
-                            </div>
-                            
-                            <button class="btn">request</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                {% if distance %}
-                <div class="testimonial-area">
-                    <div class="section-title white-title mb-55">
-                        <h6>Client Services</h6>
-                        <h2>Service Fees</h2>
-                    </div>
-                    <div class="testimonial-active">
-                        <div class="single-testimonial">
-                            <div class="testimonial-cat mb-30">
-                                <h5>Travelling to {{ destination }}</h5>
-                            </div>
-                            <div class="testimonial-content mb-45">
-                                <p class="card-text mb-5">Service fee = R{{cost|floatformat:2}}</p>
-                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="background-color: #055808;">Accept</button>
-                                <a class="btn btn-danger" href="/" style="float: right;background-color: #990505;">Decline</a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}  
-                </div>
-            </div>
+<section
+  id="request-section"
+  class="area-wrapper black-bg position-relative pt-115 pb-120"
+>
+  <div class="area-wrap-bg"></div>
+  <div class="testimonial-map-bg"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="cta-area cta-pl">
+          <div class="section-title white-title mb-60">
+            <h6>Clients Trust Us</h6>
+            <h2>Request Quote</h2>
+          </div>
+          <div class="cta-from">
+            {% include 'includes/messages.html' %}
+            <form action="#" method="POST">
+              <div class="cta-form-col d-flex justify-content-between">
+                {% csrf_token %}
+                <input
+                  type="text"
+                  name="pick_up"
+                  placeholder="Pick~Up"
+                  autocomplete="shipping street-address"
+                  id="pick-up"
+                />
+                <input
+                  type="text"
+                  name="destination"
+                  placeholder="Destination"
+                  autocomplete="shipping street-address"
+                  id="destination"
+                />
+              </div>
+              <button class="btn">request</button>
+            </form>
+          </div>
         </div>
+      </div>
+      <div class="col-lg-6">
+        {% if distance %}
+        <div class="testimonial-area">
+          <div class="section-title white-title mb-55">
+            <h6>Client Services</h6>
+            <h2>Service Fees</h2>
+          </div>
+          <div class="testimonial-active">
+            <div class="single-testimonial">
+              <div class="testimonial-cat mb-30">
+                <h5>Travelling to {{ destination }}</h5>
+              </div>
+              <div class="testimonial-content mb-45">
+                <p class="card-text mb-5">
+                  Service fee = R{{cost|floatformat:2}}
+                </p>
+                <button
+                  type="button"
+                  class="btn btn-warning"
+                  data-toggle="modal"
+                  data-target="#staticBackdrop"
+                  style="background-color: #055808"
+                >
+                  Accept
+                </button>
+                <a
+                  class="btn btn-danger"
+                  href="/"
+                  style="float: right; background-color: #990505"
+                  >Decline</a
+                >
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
     </div>
+  </div>
 </section>
 <!-- section-area-end -->
 
-{% endblock content %}
-{% block javascript %}
+{% endblock content %} {% block javascript %}
 <script src="{% static 'js/map.js' %}"></script>
-<script>        
-    const token = '{{token|safe}}'
+<script>
+  const token = '{{token|safe}}'
 </script>
 {% endblock javascript %}

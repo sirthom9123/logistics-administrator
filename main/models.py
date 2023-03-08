@@ -27,6 +27,10 @@ class Measurement(models.Model):
     destination = models.CharField(max_length=355)
     distance = models.DecimalField(max_digits=10, decimal_places=2)
     created = models.DateTimeField(auto_now_add=True)
+    l_lat = models.CharField(max_length=100, null=True)
+    l_lng = models.CharField(max_length=100, null=True)
+    d_lat = models.CharField(max_length=100, null=True)
+    d_lng = models.CharField(max_length=100, null=True)
 
     def __str__(self):
         return f"Distance from {self.location} to {self.destination} is {self.distance} km"

@@ -1,31 +1,31 @@
 # views.py
-import requests, folium, os
 from xhtml2pdf import pisa
 from geopy.distance import distance as dt
 from django.shortcuts import render, get_object_or_404, redirect
-from django.template.loader import render_to_string, get_template
-from django.contrib.staticfiles import finders
+from django.template.loader import get_template
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
 from django.http import HttpResponse
 
 from .models import MyOffice, Measurement, AdditionalInfo
-from .utils import get_zoom, get_center_coordinates
+from .utils import get_map_rep, get_coordinates, link_callback
 from .forms import CustomerForm
 
 
-def orders_view(request):
-    orders = AdditionalInfo.objects.all()
-    office = MyOffice.objects.filter(pk=1).first()
-    
-    # Get distance and calculate cost
-    # distance = orders.location.distance
-    # cost = round(distance * int(office.cost_per_kilo), 2) 
-    
-    return render(request, 'map/orders.html', {'obj': orders})
 
+def orders_view(request):
+    if not request.user.is_staff:
+        return redirect('/')
+    orders = AdditionalInfo.objects.all()
+    
+    context = {'obj': orders}
+    
+    return render(request, 'map/orders.html', context)
 
 def single_order(request, pk):
+    if not request.user.is_staff:
+        return redirect('/')
     floors_cost = None
     helper_cost = None
     
@@ -41,7 +41,7 @@ def single_order(request, pk):
     if int(obj.floors) != 0:
         floors_cost = round(int(obj.floors) * 80, 2)
         
-
+    # calculate costs
     total_cost = None
     if floors_cost == 0:
         total_cost = helper_cost + cost
@@ -51,6 +51,11 @@ def single_order(request, pk):
         total_cost = helper_cost + floors_cost + cost
     elif helper_cost == 0 and floors_cost == 0:
         total_cost = cost + 0
+        
+    # Get Map
+    map, distance = get_map_rep(float(obj.location.l_lat), float(obj.location.l_lng), float(obj.location.d_lat), float(obj.location.d_lng))
+    map_html = map._repr_html_()
+    print(map_html)
     
     context = {
             'obj': obj,
@@ -58,6 +63,7 @@ def single_order(request, pk):
             'helper_cost': helper_cost, 
             'floors_cost': floors_cost,
             'cost': cost,
+            'map': map_html,
         }
     return render(request, 'map/order.html', context)
     
@@ -66,6 +72,7 @@ def index(request):
     pick_up = ''
     destination = ''
     map_html = ''
+    map = ''
     tot_distance = ''
     cost = ''
     loc = ''
@@ -79,28 +86,31 @@ def index(request):
         if pick_up and destination:
             map_html, tot_distance = calculate_distance(pick_up, destination)
                 
+            map = map_html._repr_html_()
             # calculate the total cost for delivery
             cost = round(tot_distance * int(obj.cost_per_kilo), 2)
 
-            # Create instance of request
-            loc = Measurement.objects.create(
+            # get instance of calculate_distance helper
+            loc = Measurement.objects.filter(
                         location=pick_up,
                         destination=destination,
                         distance=tot_distance
-                    )
+                    ).first()
         else:
             messages.error(request, 'Please enter both Pick-up and destination addresses!')
     
+    
+    
     if loc:
         request.session['loc'] = loc.pk
-        request.session['map'] = map_html
+        request.session['map'] = map
         request.session['distance'] = tot_distance
     else:
         request.session['loc'] = loc
         
         
     context = {
-        'map_html': map_html,
+        'map_html': map,
         'distance': tot_distance,
         'cost': cost,
         'form': form,
@@ -111,6 +121,7 @@ def index(request):
     return render(request, 'map/index.html', context)
 
 def calculate_distance(pick_up, destination):
+    """Calculate the distance between the office, pick-up and drop-off and render map view"""
     # office location
     obj = get_object_or_404(MyOffice, id=1)
     office_lat = float(obj.lat)
@@ -128,47 +139,37 @@ def calculate_distance(pick_up, destination):
     d_lon = destination_coord[0]
     pointB = (d_lat, d_lon)
     
+    # Get map from helper function
+    map_html, distance = get_map_rep(l_lat, l_lon, d_lat, d_lon)
     
-    # Display the pick up and destination on a map using folium
-    map = folium.Map(location=get_center_coordinates(l_lat, l_lon), zoom_start=13, tiles="cartodb positron")
-
-    # Calculate Distance from the office to pick up
+    # Calculate distance from office to pick-up
     distance_from_office = round(dt(pointA, my_office).km, 2)
-    
-    # Use the mapbox library to calculate the distance
-    distance = round(dt(pointA, pointB).km, 2)
-    
-    # folium map modification
-    map = folium.Map(location=get_center_coordinates(l_lat, l_lon, d_lat, d_lon), zoom_start=get_zoom(distance))
-    
-    # Pick up marker
-    folium.Marker(location=[l_lat, l_lon], popup='Pick Up Location', icon=folium.Icon(color='purple')).add_to(map)
-    
-    # Destination marker
-    folium.Marker(location=[d_lat, d_lon], popup='Destination', icon=folium.Icon(color='red')).add_to(map)
-    
-    # draw the line between location and destination
-    line = folium.PolyLine(locations=[pointA, pointB], weight=5, color='blue')
-    map.add_child(line)
-    map_html = map._repr_html_()
     
     # Calculate total distance
     tot_distance = round(distance_from_office + distance, 2)
-    
 
+
+    # Create instance of request
+    Measurement.objects.create(
+                location=pick_up,
+                destination=destination,
+                distance=tot_distance,
+                l_lat=l_lat,
+                l_lng=l_lon,
+                d_lat=d_lat,
+                d_lng=d_lon,
+            )
+    
     return map_html, tot_distance
 
-def get_coordinates(location):
-    response = requests.get(f'https://api.mapbox.com/geocoding/v5/mapbox.places/{location}.json?access_token={settings.MAPBOX_KEY}')
-    data = response.json()
-    coordinates = data['features'][0]['center']
-    return coordinates
 
 
 def customer_form(request):
     location = None
     if 'loc' in request.session:
         location = request.session['loc']
+        
+    print(location)
     form = CustomerForm(request.POST or None)
     if form.is_valid():
         instance = form.save(commit=False)
@@ -234,38 +235,6 @@ def complete_view(request):
     }
     
     return render(request, 'map/complete.html', context)
-    
-    
-def link_callback(uri, rel):
-    """
-    Convert HTML URIs to absolute system paths so xhtml2pdf can access those
-    resources
-    """
-    result = finders.find(uri)
-    if result:
-            if not isinstance(result, (list, tuple)):
-                    result = [result]
-            result = list(os.path.realpath(path) for path in result)
-            path=result[0]
-    else:
-            sUrl = settings.STATIC_URL        # Typically /static/
-            sRoot = settings.STATIC_ROOT      # Typically /home/userX/project_static/
-            mUrl = settings.MEDIA_URL         # Typically /media/
-            mRoot = settings.MEDIA_ROOT       # Typically /home/userX/project_static/media/
-
-            if uri.startswith(mUrl):
-                    path = os.path.join(mRoot, uri.replace(mUrl, ""))
-            elif uri.startswith(sUrl):
-                    path = os.path.join(sRoot, uri.replace(sUrl, ""))
-            else:
-                    return uri
-
-    # make sure that file exists
-    if not os.path.isfile(path):
-            raise Exception(
-                    'media URI must start with %s or %s' % (sUrl, mUrl)
-            )
-    return path
 
 
 def export_quote(request, id):
