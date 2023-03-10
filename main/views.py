@@ -116,6 +116,7 @@ def index(request):
         'form': form,
         'token': token,
         'destination': destination,
+        'location': pick_up,
     }
 
     return render(request, 'map/index.html', context)

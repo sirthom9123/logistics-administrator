@@ -41,7 +41,7 @@ class AdditionalInfo(models.Model):
     location = models.ForeignKey(Measurement, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
-    pickup_date = models.DateTimeField(null=True, help_text='Date & Time')
+    pickup_date = models.DateTimeField(null=True)
     additional_helpers = models.CharField(max_length=3, choices=AdditionalHelpers.choices, default=AdditionalHelpers.ZERO)
     floors = models.CharField(max_length=3, default=0)
     created = models.DateTimeField(auto_now_add=True)

@@ -32,18 +32,16 @@
           <form action="/customer_form/" method="POST" autocomplete="off">
             {% csrf_token %}
             <div class="form-group">{{form|crispy}}</div>
-            <button type="submit" class="btn btn-primary">Proceed</button>
+            <button type="submit" style="background-color: #055808" class="btn btn-primary mt-3">Proceed</button>
+            <a
+              href="/"
+              class="btn btn-danger mt-3"
+              data-bs-dismiss="modal"
+              style="float: right; background-color: #990505"
+              >Cancel</a
+            >
           </form>
         </div>
-      </div>
-      <div class="modal-footer">
-        <a
-          href="/"
-          class="btn btn-danger"
-          data-bs-dismiss="modal"
-          style="float: right; background-color: #990505"
-          >Close</a
-        >
       </div>
     </div>
   </div>
@@ -98,12 +96,12 @@
       <div class="col-lg-6">
         <div class="cta-area cta-pl">
           <div class="section-title white-title mb-60">
-            <h6>Clients Trust Us</h6>
+            {% comment %} <h6>Clients Trust Us</h6> {% endcomment %}
             <h2>Request Quote</h2>
           </div>
           <div class="cta-from">
             {% include 'includes/messages.html' %}
-            <form action="#" method="POST">
+            <form action="#" method="POST" id="location-form">
               <div class="cta-form-col d-flex justify-content-between">
                 {% csrf_token %}
                 <input
@@ -130,13 +128,13 @@
         {% if distance %}
         <div class="testimonial-area">
           <div class="section-title white-title mb-55">
-            <h6>Client Services</h6>
+            {% comment %} <h6>Client Services</h6> {% endcomment %}
             <h2>Service Fees</h2>
           </div>
           <div class="testimonial-active">
             <div class="single-testimonial">
               <div class="testimonial-cat mb-30">
-                <h5>Travelling to {{ destination }}</h5>
+                <h5>Travelling from {{location}} <br />To: <br />{{ destination }}</h5>
               </div>
               <div class="testimonial-content mb-45">
                 <p class="card-text mb-5">

@@ -44,12 +44,13 @@
                 </div>
                 <div class="col-lg-8">
                     <div class="services-details-content">
-                        <h4>Travelling from {{ destination.location }} to  {{ destination.destination}}</h4>
+                        <h4>Travelling from {{ destination.location }} <br /> To: <br />  {{ destination.destination}}</h4>
                         <h4>Additional Info</h4>
                         <p>Customer Details: {{user.first_name}} {{ user.last_name}}</p>
                         <div class="services-details-list">
                             <ul>
                                 <li><i class="fas fa-arrow-alt-circle-right"></i>Date: {{user.pickup_date|date}} at {{user.pickup_date|time}}</li>
+                                <li><i class="fas fa-arrow-alt-circle-right"></i>Service Fee: R{{cost|floatformat:2}}</li>
                                 <li><i class="fas fa-arrow-alt-circle-right"></i>{% if helper_cost %}{{user.additional_helpers}}  Helper(s): R{{helper_cost|floatformat:2}}  {% else %} No Helpers {% endif %}</li>
                                 <li><i class="fas fa-arrow-alt-circle-right"></i>{% if floors_cost %} {{user.floors}} Floor(s):  R{{floors_cost|floatformat:2}}  {% else %} None {% endif %}</li>
                                 <li><i class="fas fa-arrow-alt-circle-right"></i>Total Service Fees: R{{total_cost|floatformat:2}}</li>
