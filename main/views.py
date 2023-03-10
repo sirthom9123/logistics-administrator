@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
 from django.http import HttpResponse
+from decimal import Decimal
 
 from .models import MyOffice, Measurement, AdditionalInfo
 from .utils import get_map_rep, get_coordinates, link_callback
@@ -55,7 +56,6 @@ def single_order(request, pk):
     # Get Map
     map, distance = get_map_rep(float(obj.location.l_lat), float(obj.location.l_lng), float(obj.location.d_lat), float(obj.location.d_lng))
     map_html = map._repr_html_()
-    print(map_html)
     
     context = {
             'obj': obj,
@@ -85,10 +85,10 @@ def index(request):
         destination = request.POST.get('destination')
         if pick_up and destination:
             map_html, tot_distance = calculate_distance(pick_up, destination)
-                
+            
             map = map_html._repr_html_()
             # calculate the total cost for delivery
-            cost = round(tot_distance * int(obj.cost_per_kilo), 2)
+            cost = round(Decimal(tot_distance) * Decimal(obj.cost_per_kilo), 2)
 
             # get instance of calculate_distance helper
             loc = Measurement.objects.filter(
@@ -107,7 +107,6 @@ def index(request):
         request.session['distance'] = tot_distance
     else:
         request.session['loc'] = loc
-        
         
     context = {
         'map_html': map,
@@ -169,8 +168,7 @@ def customer_form(request):
     location = None
     if 'loc' in request.session:
         location = request.session['loc']
-        
-    print(location)
+
     form = CustomerForm(request.POST or None)
     if form.is_valid():
         instance = form.save(commit=False)
@@ -203,10 +201,10 @@ def complete_view(request):
     customer = AdditionalInfo.objects.filter(location=location).first()
     
     if int(customer.additional_helpers) != 0:
-        helper_cost = round(140 * int(customer.additional_helpers), 2)
+        helper_cost = round(250 * int(customer.additional_helpers), 2)
     
     if int(customer.floors) != 0:
-        floors_cost = round(int(customer.floors) * 80, 2)
+        floors_cost = round(int(customer.floors) * 50, 2)
         
 
     total_cost = None
