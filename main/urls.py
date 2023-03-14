@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='locator'),
+    path('cost_estimates/', views.cost_estimates, name='cost_estimates'),
     path('customer_form/', views.customer_form, name='customer_form'),
     path('complete_view/', views.complete_view, name='complete_view'),
     path('quotation/<int:id>/', views.export_quote, name='export_quote'),

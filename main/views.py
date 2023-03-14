@@ -6,7 +6,7 @@ from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from decimal import Decimal
 
 from .models import MyOffice, Measurement, AdditionalInfo
@@ -69,56 +69,57 @@ def single_order(request, pk):
     
 
 def index(request):
-    pick_up = ''
-    destination = ''
-    map_html = ''
-    map = ''
-    tot_distance = ''
-    cost = ''
-    loc = ''
     form = CustomerForm()
-    obj = get_object_or_404(MyOffice, id=1)
     token = settings.MAPBOX_KEY
-    
-    if request.method == 'POST':
-        pick_up = request.POST.get('pick_up')
-        destination = request.POST.get('destination')
-        if pick_up and destination:
-            map_html, tot_distance = calculate_distance(pick_up, destination)
-            
-            map = map_html._repr_html_()
-            # calculate the total cost for delivery
-            cost = round(Decimal(tot_distance) * Decimal(obj.cost_per_kilo), 2)
-
-            # get instance of calculate_distance helper
-            loc = Measurement.objects.filter(
-                        location=pick_up,
-                        destination=destination,
-                        distance=tot_distance
-                    ).first()
-        else:
-            messages.error(request, 'Please enter both Pick-up and destination addresses!')
-    
-    
-    
-    if loc:
-        request.session['loc'] = loc.pk
-        request.session['map'] = map
-        request.session['distance'] = tot_distance
-    else:
-        request.session['loc'] = loc
+        
         
     context = {
-        'map_html': map,
-        'distance': tot_distance,
-        'cost': cost,
         'form': form,
         'token': token,
-        'destination': destination,
-        'location': pick_up,
     }
 
     return render(request, 'map/index.html', context)
+
+
+def cost_estimates(request):
+    map_html = ''
+    map = None
+    tot_distance = ''
+    data = {}
+    obj = get_object_or_404(MyOffice, id=1)
+    
+    if request.method == 'GET':
+        pick_up = request.GET.get('pick_up')
+        destination = request.GET.get('destination')
+        map_html, tot_distance = calculate_distance(pick_up, destination)
+        
+        map = map_html._repr_html_()
+        # calculate the total cost for delivery
+        cost = round(Decimal(tot_distance) * Decimal(obj.cost_per_kilo), 2)
+            
+        request.session['map'] = map
+        
+        data = {
+            "destination": destination,
+            "location": pick_up,
+            "cost": float(cost),
+        }
+        
+        loc = Measurement.objects.filter(
+                    location=pick_up,
+                    destination=destination
+                ).first()  
+        if loc:
+            request.session['loc'] = loc.pk
+            request.session['distance'] = tot_distance
+        else:
+            request.session['loc'] = loc
+        
+        return JsonResponse(data)
+
+    
+    
+    
 
 def calculate_distance(pick_up, destination):
     """Calculate the distance between the office, pick-up and drop-off and render map view"""
@@ -223,13 +224,13 @@ def complete_view(request):
     request.session['floors_cost'] = floors_cost
     
     context = {
+        'map': map,
         'distance' : distance,
         'destination': location,
-        'map': map,
-        'total_cost': total_cost,
-        'helper_cost': helper_cost, 
-        'floors_cost': floors_cost,
-        'cost': cost,
+        'total_cost': float(total_cost),
+        'helper_cost': float(helper_cost), 
+        'floors_cost': float(floors_cost),
+        'cost': float(cost),
         'user': customer,
     }
     

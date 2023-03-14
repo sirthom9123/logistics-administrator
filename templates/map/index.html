@@ -1,14 +1,14 @@
 {% extends 'base.html' %} {% load static %}{% load crispy_forms_tags %} 
-{% block title %} Home {% endblock title%} {% block scripts %}
+{% block title %} Home {% endblock title%} 
+{% block scripts %}
 <script
   id="search-js"
   defer
   src="https://api.mapbox.com/search-js/v1.0.0-beta.14/web.js"
 ></script>
 
-{% endblock scripts %} 
-{% block header %} {% include 'includes/nav.html' %} {% endblock header%} 
-{% block content %}
+{% endblock scripts %} {% block header %} {% include 'includes/nav.html' %} 
+{% endblock header%} {% block content %}
 <!-- Modal -->
 <div
   class="modal fade"
@@ -23,16 +23,27 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="staticBackdropLabel">Personal Details</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       <div class="modal-body">
         <div class="form-group">
           <form action="/customer_form/" method="POST" autocomplete="off">
             {% csrf_token %}
             <div class="form-group">{{form|crispy}}</div>
-            <button type="submit" style="background-color: #055808" class="btn btn-primary mt-3">Proceed</button>
+            <button
+              type="submit"
+              style="background-color: #055808"
+              class="btn btn-primary mt-3"
+            >
+              Proceed
+            </button>
             <a
               href="/"
               class="btn btn-danger mt-3"
@@ -96,12 +107,14 @@
       <div class="col-lg-6">
         <div class="cta-area cta-pl">
           <div class="section-title white-title mb-60">
-            {% comment %} <h6>Clients Trust Us</h6> {% endcomment %}
+            {% comment %}
+            <h6>Clients Trust Us</h6>
+            {% endcomment %}
             <h2>Request Quote</h2>
           </div>
           <div class="cta-from">
             {% include 'includes/messages.html' %}
-            <form action="#" method="POST" id="location-form">
+            <form id="location-form">
               <div class="cta-form-col d-flex justify-content-between">
                 {% csrf_token %}
                 <input
@@ -110,6 +123,7 @@
                   placeholder="Pick~Up"
                   autocomplete="shipping street-address"
                   id="pick-up"
+                  required
                 />
                 <input
                   type="text"
@@ -117,6 +131,7 @@
                   placeholder="Destination"
                   autocomplete="shipping street-address"
                   id="destination"
+                  required
                 />
               </div>
               <button class="btn">request</button>
@@ -125,40 +140,14 @@
         </div>
       </div>
       <div class="col-lg-6">
-        {% if distance %}
         <div class="testimonial-area">
           <div class="section-title white-title mb-55">
-            {% comment %} <h6>Client Services</h6> {% endcomment %}
             <h2>Service Fees</h2>
+            <div id="alert-box"></div>
           </div>
           <div class="testimonial-active">
-            <div class="single-testimonial">
-              <div class="testimonial-cat mb-30">
-                <h5>Travelling from {{location}} <br />To: <br />{{ destination }}</h5>
-              </div>
-              <div class="testimonial-content mb-45">
-                <p class="card-text mb-5">
-                  Service fee = R{{cost|floatformat:2}}
-                </p>
-                <button
-                  type="button"
-                  class="btn btn-warning"
-                  data-toggle="modal"
-                  data-target="#staticBackdrop"
-                  style="background-color: #055808"
-                >
-                  Accept
-                </button>
-                <a
-                  class="btn btn-danger"
-                  href="/"
-                  style="float: right; background-color: #990505"
-                  >Decline</a
-                >
-              </div>
-            </div>
+            <div class="single-testimonial" id="distance-results"></div>
           </div>
-          {% endif %}
         </div>
       </div>
     </div>
@@ -167,8 +156,8 @@
 <!-- section-area-end -->
 
 {% endblock content %} {% block javascript %}
-<script src="{% static 'js/map.js' %}"></script>
 <script>
   const token = '{{token|safe}}'
 </script>
+<script src="{% static 'js/map.js' %}"></script>
 {% endblock javascript %}
