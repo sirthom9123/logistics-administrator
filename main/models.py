@@ -46,6 +46,7 @@ class AdditionalInfo(models.Model):
     pickup_date = models.DateTimeField(null=True)
     additional_helpers = models.CharField(max_length=3, choices=AdditionalHelpers.choices, default=AdditionalHelpers.ZERO)
     floors = models.CharField(max_length=3, default=0)
+    paid = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     
     class Meta: 

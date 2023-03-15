@@ -4,6 +4,7 @@ from geopy.distance import distance as dt
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
@@ -174,6 +175,7 @@ def customer_form(request):
     if form.is_valid():
         instance = form.save(commit=False)
         instance.location_id = location
+        instance.paid = False
         instance.save()
         
         messages.success(request, "Request has been created!")
@@ -263,6 +265,56 @@ def export_quote(request, id):
     # create pdf
     pisa_status = pisa.CreatePDF(
        html, dest=response, link_callback=link_callback)
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
+
+@staff_member_required
+def admin_order_pdf(request, order_id):
+    customer_obj = get_object_or_404(AdditionalInfo, id=order_id)
+    office_obj = get_object_or_404(MyOffice, id=1)
+    
+    distance = None
+    cost = 0
+    helper_cost = 0
+    floors_cost = 0
+    
+    cost = round(customer_obj.location.distance * int(office_obj.cost_per_kilo), 2) 
+    
+    if int(customer_obj.additional_helpers) != 0:
+        helper_cost = round(250 * int(customer_obj.additional_helpers), 2)
+    
+    if int(customer_obj.floors) != 0:
+        floors_cost = round(int(customer_obj.floors) * 50, 2)
+    
+    total_cost = None
+    if floors_cost == 0:
+        total_cost = helper_cost + cost
+    elif helper_cost == 0:
+        total_cost = floors_cost + cost
+    elif helper_cost != 0 and floors_cost != 0:
+        total_cost = helper_cost + floors_cost + cost
+    elif helper_cost == 0 and floors_cost == 0:
+        total_cost = cost + 0
+    
+    context = {
+            'user': customer_obj, 
+            'destination': customer_obj.location,
+            'total_cost': total_cost,
+            'cost': cost,
+            'helper_cost': helper_cost, 
+            'floors_cost': floors_cost,
+            'rate': office_obj.cost_per_kilo
+    }
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'filename=quotation_{customer_obj.customer_code}.pdf'
+    template = get_template('pdf.html')
+    html = template.render(context) 
+    pdf_encoding='UTF-8'
+    
+    # create pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response, link_callback=link_callback, encoding=pdf_encoding)
     if pisa_status.err:
        return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
