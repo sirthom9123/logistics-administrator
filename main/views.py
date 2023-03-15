@@ -36,7 +36,7 @@ def single_order(request, pk):
     
     # Get distance and calculate cost
     distance = obj.location.distance
-    cost = round(distance * int(office.cost_per_kilo), 2) 
+    cost = round((Decimal(distance) * Decimal(office.cost_per_kilo)) + Decimal(office.platform_fee), 2) 
     if int(obj.additional_helpers) != 0:
         helper_cost = round(140 * int(obj.additional_helpers), 2)
     
@@ -96,7 +96,7 @@ def cost_estimates(request):
         
         map = map_html._repr_html_()
         # calculate the total cost for delivery
-        cost = round(Decimal(tot_distance) * Decimal(obj.cost_per_kilo), 2)
+        cost = round((Decimal(tot_distance) * Decimal(obj.cost_per_kilo)) + Decimal(obj.platform_fee), 2)
             
         request.session['map'] = map
         
@@ -198,7 +198,7 @@ def complete_view(request):
         location = Measurement.objects.filter(pk=request.session['loc']).first()
         map = request.session['map']
         distance = request.session['distance']
-        cost = round(distance * int(obj.cost_per_kilo), 2) 
+        cost = round((distance * int(obj.cost_per_kilo)) + int(obj.platform_fee), 2) 
     
     
     customer = AdditionalInfo.objects.filter(location=location).first()
@@ -279,7 +279,7 @@ def admin_order_pdf(request, order_id):
     helper_cost = 0
     floors_cost = 0
     
-    cost = round(customer_obj.location.distance * int(office_obj.cost_per_kilo), 2) 
+    cost = round((customer_obj.location.distance * int(office_obj.cost_per_kilo)) + int(office_obj.platform_fee), 2) 
     
     if int(customer_obj.additional_helpers) != 0:
         helper_cost = round(250 * int(customer_obj.additional_helpers), 2)

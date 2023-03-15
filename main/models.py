@@ -15,6 +15,7 @@ class MyOffice(models.Model):
     name = models.CharField(max_length=200)
     address = models.CharField(max_length=355)
     cost_per_kilo = models.DecimalField(max_digits=7, decimal_places=2, validators=[MinValueValidator(1)], default=1.0)
+    platform_fee = models.DecimalField(max_digits=7, decimal_places=2, validators=[MinValueValidator(1)], default=1.0)
     lat = models.CharField(max_length=100)
     lng = models.CharField(max_length=100)
     
